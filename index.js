@@ -6,6 +6,8 @@ import teacherPersonal from "./routes/Teacher_Routes/Personal.js";
 import teacherCollege from "./routes/Teacher_Routes/College.js";
 import teacherBank from "./routes/Teacher_Routes/Bank.js";
 import teacherReq from './routes/Teacher_Routes/Req.js'
+import teachAccept from './routes/Teacher_Routes/AcceptClass.js'
+import teachWebinar from './routes/Teacher_Routes/webinar.js'
 
 import studAuth from './routes/Student_Routes/Auth.js'
 import studPersonal from './routes/Student_Routes/Personal.js'
@@ -28,6 +30,8 @@ app.use("/teachPersonal", teacherPersonal);
 app.use("/teachCollege", teacherCollege);
 app.use("/teachBank", teacherBank);
 app.use("/teachReq" , teacherReq)
+app.use("/teachAcc",teachAccept)
+app.use("/teachWebinar",teachWebinar)
 
 //students endpoints
 app.use("/studAuth", studAuth)

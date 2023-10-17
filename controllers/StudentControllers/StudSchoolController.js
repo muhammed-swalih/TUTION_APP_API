@@ -24,3 +24,17 @@ export const postStudSchool = async (req, res) => {
     return;
   }
 };
+
+export const getSchool = async(req,res)=>{
+  const school = await studSchoolDetails.findOne({ studentId: req.user._id });
+  if (!school) {
+    res.status(404).json("please upload your school details");
+    return;
+  }
+
+  try {
+    res.status(200).json(school);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+}

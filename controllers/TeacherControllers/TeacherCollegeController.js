@@ -42,3 +42,20 @@ export const postCollegeDetails = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+export const getCollege = async (req, res) => {
+  const teacherCollege = await TeacherCollegeDetails.findOne({
+    teacherId: req.user._id,
+  });
+
+  if (!teacherCollege) {
+    res.status(404).json("please upload your college details");
+    return;
+  }
+
+  try {
+    res.status(200).json(teacherCollege);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};

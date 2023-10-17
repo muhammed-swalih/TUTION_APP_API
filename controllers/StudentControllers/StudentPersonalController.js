@@ -53,3 +53,18 @@ export const postStudPersonal = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+
+export const getPersonal = async(req,res) => {
+  const personal = await StudPersonalDetails.findOne({ studentId: req.user._id });
+  if (!personal) {
+    res.status(404).json("please upload your personal details");
+    return;
+  }
+
+  try {
+    res.status(200).json(personal);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+}

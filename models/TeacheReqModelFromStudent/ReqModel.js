@@ -10,7 +10,8 @@ const ReqSchema = new Schema({
   },
   studSchool: { type: mongoose.Schema.Types.ObjectId, ref: "studentSchool" },
   studentId: { type: mongoose.Schema.Types.ObjectId, ref: "studentAuth" },
-  time: { type: String, required: true },
+  board : {type : String, required : true}
+, time: { type: String, required: true },
   subjectOne : {type : String, required : true},
   subjectTwo : {type : String, required : true}
 });
