@@ -1,3 +1,4 @@
+import paymentMode from "../../models/Student_Payment/paymentMode.js";
 import webinar from "../../models/webinarModel/webinar.js";
 
 export const postWebinar = async (req, res) => {
@@ -53,7 +54,51 @@ export const getWebinar = async (req, res) => {
   }
 };
 
+export const getWebinarDetailsForStudents = async (req, res) => {
+  const allWebinars = await webinar.find();
+  if (!allWebinars) {
+    res.status(404).json("currently there is no webinar conducted");
+    return;
+  }
+  try {
+    res.status(200).json(allWebinars);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
 
-export const enrollWebinar = async(req,res) => {
-    
-}
+export const enrollWebinar = async (req, res) => {
+  console.log(req);
+  res.status(200).json(req.paidUser);
+
+  const yourWebinar = await webinar.findOne({ _id: req.paidUser.id });
+  if (!yourWebinar) {
+    res.status(404).json("there is no webinars");
+    return;
+  }
+
+  try {
+    res.status(200).json(yourWebinar);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+export const getStudentsForWebinar = async (req, res) => {
+  const myStudents = await paymentMode
+    .find({ paidTo: req.user._id })
+    .populate("paidBy", "-password")
+    .populate("webinar")
+    .populate("paidTo");
+
+  if (!myStudents) {
+    res.status(404).json("no student is registered");
+    return;
+  }
+
+  try {
+    res.status(200).json(myStudents);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
