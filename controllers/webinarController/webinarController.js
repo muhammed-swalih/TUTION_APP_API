@@ -68,7 +68,6 @@ export const getWebinarDetailsForStudents = async (req, res) => {
 };
 
 export const enrollWebinar = async (req, res) => {
-  console.log(req);
   res.status(200).json(req.paidUser);
 
   const yourWebinar = await webinar.findOne({ _id: req.paidUser.id });
