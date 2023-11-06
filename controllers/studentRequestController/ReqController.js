@@ -47,19 +47,13 @@ export const getReqFromStud = async (req, res) => {
   }
 };
 
-export const acceptReq = async (req,res) => {
-  const {reqId} = req.body
-  if(!reqId){
-    res.status(404).json("please fill the required feilds")
-    return;
-  }
+export const enrollClass = (req,res) => {
 
-
+  
 
   try {
     
   } catch (error) {
     
   }
-
 }

@@ -2,11 +2,13 @@ import paymentMode from "../../models/Student_Payment/paymentMode.js";
 import { generateToken } from "../../config/generateToken.js";
 import crypto from "crypto";
 import instance from "../../razorPayInstance.js";
+import webinar from "../../models/webinarModel/webinar.js";
+import dotenv from "dotenv";
 
+dotenv.config();
 
 export const createOrder = async (req, res) => {
   const { amount } = req.body;
-  // console.log(paidBy);
   try {
     const options = {
       amount: Number(amount * 100), // amount in the smallest currency unit
@@ -36,30 +38,24 @@ export const verifyPayment = async (req, res) => {
     paidTo,
     webinarId,
   } = req.body;
+
   console.log(req.body);
 
   const body = razorpay_order_id + "|" + razorpay_payment_id;
 
-  const isAlreadyPaid = await paymentMode.findOne({
-    paidFrom: paidFrom,
-    paidTo: paidTo,
-    webinarId: webinarId,
-  });
-  if (isAlreadyPaid) {
-    res.status(500).json("you are already paid for this webinar");
-    return;
-  }
-
   const expectedSignature = crypto
-    .createHmac("sha256", "JfqEmXLfpifeEMVRVbVoigjP")
+    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
     .update(body.toString())
     .digest("hex");
 
   const isAuthentic = expectedSignature === razorpay_signature;
   if (!isAuthentic) {
-    res.status(500).json("keys are dosn't match");
-    return;
+    return res.status(404).json("keys don't match");
   }
+
+  const currentTime = new Date();
+
+  const webinarEndingTime = await webinar.findOne({ _id: webinarId });
   const newPayment = new paymentMode({
     razorpay_order_id: razorpay_order_id,
     razorpay_payment_id: razorpay_payment_id,
@@ -68,8 +64,10 @@ export const verifyPayment = async (req, res) => {
     paidTo: paidTo,
     webinarId: webinarId,
     paidToken: generateToken(webinarId),
+    tokenExpiresAt: webinarEndingTime.endingTime,
   });
-  try {
+
+  if (currentTime <= webinarEndingTime.endingTime) {
     const savedPayment = await paymentMode.create(newPayment);
     const response = await paymentMode
       .findOne({ _id: savedPayment._id })
@@ -77,9 +75,13 @@ export const verifyPayment = async (req, res) => {
       .populate("paidTo", "-password")
       .populate("webinarId");
 
-    res.status(200).json(response);
-    console.log(response);
-  } catch (error) {
-    res.status(500).json(error);
+    return res
+      .status(200)
+      .json(response + "token is valid you are allowed to access this webinar");
+  } else {
+    return res
+      .status(500)
+      .json("token is expired, can't participate in this webinar");
   }
+
 };

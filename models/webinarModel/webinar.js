@@ -3,10 +3,11 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const webinarSchema = new Schema({
-  teacherId: {type : mongoose.Schema.Types.ObjectId, ref : "auth"},
-  date: { type: String, required: true },
-  time: { type: String, required: true },
-  topic: { type: String, requried: true },
+  teacherId: { type: mongoose.Schema.Types.ObjectId, ref: "auth" },
+  date: { type: Date, required: true }, // Change the data type to Date
+  StartingTime: { type: Date, required: true }, // Change the data type to Date
+  endingTime: { type: Date, required: true }, // Change the data type to Date
+  topic: { type: String, required: true },
   description: { type: String, required: true },
   poster: { type: String, required: true },
   amount: { type: String, required: true },

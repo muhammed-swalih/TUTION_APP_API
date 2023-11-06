@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
-const paymentSchema = new Schema({
+const classPayment = new Schema({
   razorpay_order_id: { type: String, required: true },
   razorpay_order_id: { type: String, required: true },
   razorpay_order_id: { type: String, required: true },
@@ -12,13 +12,13 @@ const paymentSchema = new Schema({
     required: true,
   },
   paidTo: { type: mongoose.Schema.Types.ObjectId, ref: "auth", required: true },
-  webinarId: {
+  reqId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "webinarModel",
+    ref: "studentRequest",
     required: true,
   },
   paidToken: { type: String, required: true },
   tokenExpiresAt: { type: Date, required: true },
 });
 
-export default mongoose.model("payment", paymentSchema);
+export default mongoose.model("paymentForClass", classPayment);
