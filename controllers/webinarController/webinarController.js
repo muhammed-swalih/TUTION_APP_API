@@ -1,5 +1,6 @@
 import paymentMode from "../../models/Student_Payment/paymentMode.js";
 import webinar from "../../models/webinarModel/webinar.js";
+import moment from "moment-timezone";
 
 export const postWebinar = async (req, res) => {
   const {
@@ -26,12 +27,33 @@ export const postWebinar = async (req, res) => {
     res.status(404).json("please fill the required feild");
     return;
   }
+  // const localDate = moment.utc(date).tz("Asia/Kolkata").format("YYYY-MM-DD");
+  // const localStartingTime = moment.utc(StartingTime, "Asia/Kolkata").format();
+  // const localEndingTime = moment.utc(endingTime, "Asia/Kolkata").format();
+
+  // const localDate = moment.utc(date);
+  // const localStartingTime = moment.utc(StartingTime);
+  // const localEndingTime = moment.utc(endingTime);
+
+  // const checkDate = new Date(localStartingTime)
+
+  const localDate = moment(date).tz("Asia/Kolkata").format("YYYY-MM-DD");
+  const localStartingTime = moment(StartingTime)
+    .tz("Asia/Kolkata")
+    .format("YYYY-MM-DD hh:mm:ss");
+  const localEndingTime = moment(endingTime)
+    .tz("Asia/Kolkata")
+    .format("YYYY-MM-DD hh:mm:ss");
+
+  console.log(localDate);
+  console.log(localStartingTime);
+  console.log(localEndingTime);
 
   const newWebinar = new webinar({
     teacherId: teacherId,
-    date: date,
-    StartingTime: StartingTime,
-    endingTime: endingTime,
+    date: localDate, // Convert to Date with local timezone
+    StartingTime: localStartingTime,
+    endingTime: localEndingTime,
     topic: topic,
     description: description,
     poster: poster,

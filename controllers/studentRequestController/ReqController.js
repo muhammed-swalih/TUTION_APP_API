@@ -1,9 +1,26 @@
 import ReqModel from "../../models/TeacheReqModelFromStudent/ReqModel.js";
+import Class from "../../models/classModel/Class.js";
 
 export const postReqFromStud = async (req, res) => {
-  const { studPersonal, studSchool, teacherId, studentId } = req.body;
+  const {
+    studPersonal,
+    studSchool,
+    teacherId,
+    studentId,
+    board,
+    time,
+    subjects,
+  } = req.body;
 
-  if (!studPersonal || !studSchool || !teacherId || !studentId) {
+  if (
+    !studPersonal ||
+    !studSchool ||
+    !teacherId ||
+    !studentId ||
+    !board ||
+    !time ||
+    !subjects
+  ) {
     res.status(404).json("please fill the required feilds");
     return;
   }
@@ -13,47 +30,47 @@ export const postReqFromStud = async (req, res) => {
     studPersonal: studPersonal,
     studSchool: studSchool,
     studentId: studentId,
+    board: board,
+    time: time,
+    subjects: subjects,
   };
 
   try {
     const newStudent = await ReqModel.create(newReq);
     const studDetails = await ReqModel.findOne({ _id: newStudent._id })
-      .populate("studPersonal", "-phone")
+      .populate("studPersonal", "-PrimaryPhone -SecondaryPhone")
       .populate("studSchool", "-idProof")
       .populate("teacherId", "-password")
-      .populate("studentId", "-password");
+      .populate("studentId", "-password -phone");
 
     res.status(200).json(studDetails);
   } catch (error) {
     res.status(500).json(error);
   }
 };
-
-export const getReqFromStud = async (req, res) => {
+export const showAllClassesToStudents = async (req, res) => {
   try {
-    const requests = await ReqModel.find({ teacherId: req.user._id })
-      .populate("studPersonal", "-phone")
-      .populate("studSchool", "-idProof")
-      .populate("studentId", "-password");
+    const classes = await Class.find()
+      .populate("reqId")
+      .populate("teacher", "-password")
+      .populate("student", "-password");
+    return res.status(200).json(classes);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
 
-    if (!requests) {
-      res.status(404).json("there is no requests");
-      return;
-    }
+export const enrollClass = async (req, res) => {
+  console.log(req.paidUser);
 
-    res.status(200).json(requests);
+  const myClass = await Class.findOne({ _id: req.paidUser._id });
+  if (!myClass) {
+    res.status(200).json("you are not paid for classes");
+    return;
+  }
+  try {
+    res.status(200).json(myClass);
   } catch (error) {
     res.status(500).json(error);
   }
 };
-
-export const enrollClass = (req,res) => {
-
-  
-
-  try {
-    
-  } catch (error) {
-    
-  }
-}

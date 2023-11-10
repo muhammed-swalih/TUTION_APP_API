@@ -4,6 +4,9 @@ import crypto from "crypto";
 import instance from "../../razorPayInstance.js";
 import webinar from "../../models/webinarModel/webinar.js";
 import dotenv from "dotenv";
+import Class from "../../models/classModel/Class.js";
+import paymentForClass from "../../models/Student_Payment/paymentForClass.js";
+import moment from "moment-timezone";
 
 dotenv.config();
 
@@ -53,9 +56,26 @@ export const verifyPayment = async (req, res) => {
     return res.status(404).json("keys don't match");
   }
 
-  const currentTime = new Date();
+  // const currentTime = moment().tz("Asia/Kolkata").format("YYYY-MM-DD hh:mm:ss");
+  const time = new Date();
+  const currentTime = moment(time)
+    .tz("Asia/kolkata")
+    .format("YYYY-MM-DD hh:mm:ss");
+  console.log(currentTime);
+
+  const isAlreadExist = await paymentMode.findOne({
+    paidFrom: paidFrom,
+    webinarId: webinarId,
+  });
 
   const webinarEndingTime = await webinar.findOne({ _id: webinarId });
+  if (isAlreadExist) {
+    if (currentTime <= webinarEndingTime.endingTime) {
+      return res.status(200).json("you are already paid for this webinar");
+    } else {
+      return res.status(404).json("this webinar is finished");
+    }
+  }
   const newPayment = new paymentMode({
     razorpay_order_id: razorpay_order_id,
     razorpay_payment_id: razorpay_payment_id,
@@ -77,11 +97,77 @@ export const verifyPayment = async (req, res) => {
 
     return res
       .status(200)
-      .json(response + "token is valid you are allowed to access this webinar");
+      .json("token is valid you are allowed to access this webinar");
   } else {
     return res
       .status(500)
       .json("token is expired, can't participate in this webinar");
   }
+};
 
+export const verifyPaymentForClass = async (req, res) => {
+  const {
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+    paidFrom,
+    paidTo,
+    classId,
+  } = req.body;
+
+  if (
+    (!razorpay_order_id,
+    !razorpay_payment_id,
+    !razorpay_signature,
+    !paidFrom,
+    !paidTo,
+    !classId)
+  ) {
+    return res.status(404).json("please fill the required feilds");
+  }
+  const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+  const expectedSignature = crypto
+    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+    .update(body.toString())
+    .digest("hex");
+
+  const isAuthentic = expectedSignature === razorpay_signature;
+
+  if (!isAuthentic) {
+    return res.status(500).json("keys doesn't match");
+  }
+
+  const time = new Date();
+  const currentTime = moment(time)
+    .tz("Asia/kolkata")
+    .format("YYYY-MM-DD hh:mm:ss");
+  console.log(currentTime);
+
+  const myClass = await Class.findOne({ _id: classId });
+  const paidClass = new paymentForClass({
+    razorpay_order_id: razorpay_order_id,
+    razorpay_payment_id: razorpay_payment_id,
+    razorpay_signature: razorpay_signature,
+    paidFrom: paidFrom,
+    paidTo: paidTo,
+    classId: classId,
+    paidToken: generateToken(classId),
+    tokenExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+  });
+
+  const newPaidClass = await paymentForClass.findOne({ _id: paidClass._id });
+
+  if (currentTime <= newPaidClass._id) {
+    const savedNewClass = await paymentForClass.create(paidClass);
+    const response = await paymentForClass
+      .findOne({ _id: savedNewClass._id })
+      .populate("paidTo", "-password")
+      .populate("paidTo", "-password")
+      .populate("classId");
+
+    return res.status(200).json(response);
+  } else {
+    return res.status(500).json("token expired pay for the new month ");
+  }
 };

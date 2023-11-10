@@ -1,3 +1,4 @@
+import ReqModel from "../../models/TeacheReqModelFromStudent/ReqModel.js";
 import Class from "../../models/classModel/Class.js";
 
 export const acceptClass = async (req, res) => {
@@ -6,6 +7,11 @@ export const acceptClass = async (req, res) => {
   if (!reqId || !teacher || !student) {
     res.status(404).json("please fill the required feild");
     return;
+  }
+
+  const isReqExist = await Class.findOne({ reqId: reqId });
+  if (isReqExist) {
+    return res.status(500).json("you already accept this request");
   }
 
   const acceptedClass = {
@@ -22,6 +28,24 @@ export const acceptClass = async (req, res) => {
       .populate("student", "-password");
 
     res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+export const getReqFromStud = async (req, res) => {
+  try {
+    const requests = await ReqModel.findOne({ teacherId: req.user._id })
+      .populate("studPersonal", "-phone")
+      .populate("studSchool", "-idProof")
+      .populate("studentId", "-password");
+
+    if (!requests) {
+      res.status(404).json("there is no requests");
+      return;
+    }
+
+    res.status(200).json(requests);
   } catch (error) {
     res.status(500).json(error);
   }

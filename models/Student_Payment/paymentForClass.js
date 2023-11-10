@@ -12,9 +12,9 @@ const classPayment = new Schema({
     required: true,
   },
   paidTo: { type: mongoose.Schema.Types.ObjectId, ref: "auth", required: true },
-  reqId: {
+  classId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "studentRequest",
+    ref: "classes",
     required: true,
   },
   paidToken: { type: String, required: true },

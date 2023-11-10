@@ -10,6 +10,7 @@ import teachAccept from "./routes/Teacher_Routes/AcceptClass.js";
 import teachWebinar from "./routes/Teacher_Routes/webinar.js";
 import payment from "./routes/Payement_routes/payment.js";
 import assignment from "./routes/Teacher_Routes/Assignment.js";
+import createClass from './routes/Teacher_Routes/Req.js'
 
 import studAuth from "./routes/Student_Routes/Auth.js";
 import studPersonal from "./routes/Student_Routes/Personal.js";
@@ -38,6 +39,7 @@ app.use("/teachWebinar", teachWebinar);
 app.use("/assignment", assignment);
 
 app.use("/payment", payment);
+app.use("/createClass",createClass)
 
 //students endpoints
 app.use("/studAuth", studAuth);

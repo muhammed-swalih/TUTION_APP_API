@@ -1,10 +1,10 @@
 import express from 'express'
-import { protect } from '../../middlewares/jwt.js';
+import { protect, protectStudent } from '../../middlewares/jwt.js';
 import { getPersonal, postStudPersonal } from '../../controllers/StudentControllers/StudentPersonalController.js';
 
 const router = express();
 
-router.post("/",protect,postStudPersonal)
-router.get("/",protect,getPersonal)
+router.post("/",protectStudent,postStudPersonal)
+router.get("/",protectStudent,getPersonal)
 
 export default router

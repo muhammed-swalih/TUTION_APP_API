@@ -4,9 +4,9 @@ const { Schema } = mongoose;
 
 const webinarSchema = new Schema({
   teacherId: { type: mongoose.Schema.Types.ObjectId, ref: "auth" },
-  date: { type: Date, required: true }, // Change the data type to Date
-  StartingTime: { type: Date, required: true }, // Change the data type to Date
-  endingTime: { type: Date, required: true }, // Change the data type to Date
+  date: { type: String, required: true }, // Change the data type to Date
+  StartingTime: { type: String, required: true }, // Change the data type to Date
+  endingTime: { type: String, required: true }, // Change the data type to Date
   topic: { type: String, required: true },
   description: { type: String, required: true },
   poster: { type: String, required: true },

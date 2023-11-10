@@ -7,4 +7,6 @@ const router = express();
 router.post("/",protect,acceptClass)
 router.get("/",protect,getAcceptedClass)
 
+
+
 export default router
