@@ -10,13 +10,14 @@ import teachAccept from "./routes/Teacher_Routes/AcceptClass.js";
 import teachWebinar from "./routes/Teacher_Routes/webinar.js";
 import payment from "./routes/Payement_routes/payment.js";
 import assignment from "./routes/Teacher_Routes/Assignment.js";
-import createClass from './routes/Teacher_Routes/Req.js'
+import createClass from "./routes/Teacher_Routes/Req.js";
+import postReportByTeacher from "./routes/Teacher_Routes/Reports.js";
 
 import studAuth from "./routes/Student_Routes/Auth.js";
 import studPersonal from "./routes/Student_Routes/Personal.js";
 import studSchool from "./routes/Student_Routes/School.js";
 import studParent from "./routes/Student_Routes/Parent.js";
-
+import postReportsByStudents from './routes/Student_Routes/Reports.js'
 //importing dependencies
 import cors from "cors";
 import dotenv from "dotenv";
@@ -37,15 +38,17 @@ app.use("/teachReq", teacherReq);
 app.use("/teachAcc", teachAccept);
 app.use("/teachWebinar", teachWebinar);
 app.use("/assignment", assignment);
+app.use("/teacherReport", postReportByTeacher);
 
 app.use("/payment", payment);
-app.use("/createClass",createClass)
+app.use("/createClass", createClass);
 
 //students endpoints
 app.use("/studAuth", studAuth);
 app.use("/studPersonal", studPersonal);
 app.use("/studSchool", studSchool);
 app.use("/studParent", studParent);
+app.use("/studentReport", postReportsByStudents)
 
 const connect = async () => {
   try {

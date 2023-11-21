@@ -1,5 +1,5 @@
 import express from "express";
-import { paymentHolding, protect } from "../../middlewares/jwt.js";
+import { paymentHolding, protect, protectStudent } from "../../middlewares/jwt.js";
 import {
   enrollWebinar,
   getStudentsForWebinar,
@@ -12,7 +12,7 @@ const router = express();
 
 router.post("/", protect, postWebinar);
 router.get("/", protect, getWebinar);
-router.get("/allwebinars", protect, getWebinarDetailsForStudents);
+router.get("/allwebinars", protectStudent, getWebinarDetailsForStudents);
 router.get("/getPaidStud", protect, paymentHolding, enrollWebinar);
 router.get("/myStudents", protect, getStudentsForWebinar);
 

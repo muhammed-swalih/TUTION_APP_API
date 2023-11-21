@@ -11,6 +11,7 @@ import moment from "moment-timezone";
 dotenv.config();
 
 export const createOrder = async (req, res) => {
+  console.log("iam the order api");
   const { amount } = req.body;
   try {
     const options = {
@@ -106,6 +107,7 @@ export const verifyPayment = async (req, res) => {
 };
 
 export const verifyPaymentForClass = async (req, res) => {
+  console.log(req.body);
   const {
     razorpay_order_id,
     razorpay_payment_id,
@@ -137,11 +139,16 @@ export const verifyPaymentForClass = async (req, res) => {
   if (!isAuthentic) {
     return res.status(500).json("keys doesn't match");
   }
+  const expireTimeOfTheToken = moment()
+    .add(30, "days")
+    .tz("Asia/Kolkata")
+    .format("YYYY-MM-DD hh:mm:ss");
 
   const time = new Date();
   const currentTime = moment(time)
     .tz("Asia/kolkata")
     .format("YYYY-MM-DD hh:mm:ss");
+  console.log(expireTimeOfTheToken);
   console.log(currentTime);
 
   const myClass = await Class.findOne({ _id: classId });
@@ -153,12 +160,16 @@ export const verifyPaymentForClass = async (req, res) => {
     paidTo: paidTo,
     classId: classId,
     paidToken: generateToken(classId),
-    tokenExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    tokenExpiresAt: expireTimeOfTheToken,
   });
 
   const newPaidClass = await paymentForClass.findOne({ _id: paidClass._id });
+  
+  if(paidClass.razorpay_order_id === razorpay_order_id){
+    return res.status(200).json("you are already paid for this class countinue for avalibale days")
+  }
 
-  if (currentTime <= newPaidClass._id) {
+  if (currentTime <= expireTimeOfTheToken) {
     const savedNewClass = await paymentForClass.create(paidClass);
     const response = await paymentForClass
       .findOne({ _id: savedNewClass._id })

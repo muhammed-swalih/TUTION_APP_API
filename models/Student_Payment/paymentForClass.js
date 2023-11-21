@@ -18,7 +18,7 @@ const classPayment = new Schema({
     required: true,
   },
   paidToken: { type: String, required: true },
-  tokenExpiresAt: { type: Date, required: true },
+  tokenExpiresAt: { type: String, required: true },
 });
 
 export default mongoose.model("paymentForClass", classPayment);

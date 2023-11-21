@@ -35,7 +35,7 @@ export const acceptClass = async (req, res) => {
 
 export const getReqFromStud = async (req, res) => {
   try {
-    const requests = await ReqModel.findOne({ teacherId: req.user._id })
+    const requests = await ReqModel.find({ teacherId: req.user._id })
       .populate("studPersonal", "-phone")
       .populate("studSchool", "-idProof")
       .populate("studentId", "-password");
@@ -53,7 +53,7 @@ export const getReqFromStud = async (req, res) => {
 
 export const getAcceptedClass = async (req, res) => {
   try {
-    const classes = await Class.findOne({ teacher: req.user._id })
+    const classes = await Class.find({ teacher: req.user._id })
       .populate("teacher", "-password")
       .populate("student", "-password")
       .populate({

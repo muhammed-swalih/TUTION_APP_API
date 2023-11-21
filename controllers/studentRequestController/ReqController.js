@@ -1,7 +1,7 @@
 import ReqModel from "../../models/TeacheReqModelFromStudent/ReqModel.js";
 import Class from "../../models/classModel/Class.js";
 
-export const postReqFromStud = async (req, res) => {
+export const  postReqFromStud = async (req, res) => {
   const {
     studPersonal,
     studSchool,

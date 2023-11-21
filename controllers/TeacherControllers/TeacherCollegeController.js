@@ -3,6 +3,7 @@ import TeacherCollegeDetails from "../../models/TeacherRegistrationModels/Teache
 export const postCollegeDetails = async (req, res) => {
   console.log(req.body);
   const {
+    teacherId,
     collegeName,
     colAddress,
     courses,
@@ -13,6 +14,7 @@ export const postCollegeDetails = async (req, res) => {
   } = req.body;
 
   if (
+    !teacherId ||
     !collegeName ||
     !colAddress ||
     !courses ||
@@ -26,6 +28,7 @@ export const postCollegeDetails = async (req, res) => {
   }
 
   const collegeDetails = new TeacherCollegeDetails({
+    teacherId: teacherId,
     collegeName: collegeName,
     colAddress: colAddress,
     courses: courses,
@@ -36,8 +39,13 @@ export const postCollegeDetails = async (req, res) => {
   });
 
   try {
-    await collegeDetails.save();
-    res.status(200).json(collegeDetails);
+    const teacherCollegeDetails = await TeacherCollegeDetails.create(
+      collegeDetails
+    );
+    const response = await TeacherCollegeDetails.findOne({
+      _id: teacherCollegeDetails._id,
+    }).populate("teacherId", "-password");
+    res.status(200).json(response);
   } catch (error) {
     res.status(500).json(error);
   }

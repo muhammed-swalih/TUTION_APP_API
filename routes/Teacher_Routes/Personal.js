@@ -1,5 +1,5 @@
 import express from 'express'
-import { getPersonal, postPersonal } from '../../controllers/TeacherControllers/TeacherPersonlController.js';
+import { getPersonal, postPersonal } from '../../controllers/TeacherControllers/TeacherPersonlController.mjs';
 import { protect } from '../../middlewares/jwt.js';
 
 const router = express();

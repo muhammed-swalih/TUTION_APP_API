@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const PersonalSchema = new Schema({
-  studentId : {type : String, required : true},
-  gender : {type : String, required : true},
+  studentId: { type: String, required: true },
+  gender: { type: String, required: true },
   dob: { type: String, required: true },
   primaryLang: { type: String, required: true },
   secondaryLang: { type: String, required: true },
@@ -13,7 +13,8 @@ const PersonalSchema = new Schema({
   pincode: { type: String, required: true },
   state: { type: String, required: true },
   district: { type: String, required: true },
-  img: { type: String, required: true },
+  img: { data: Buffer, contentType: String },
+  picUrl: { type: String },
 });
 
 export default mongoose.model("studentPersonal", PersonalSchema);
